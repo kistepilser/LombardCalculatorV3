@@ -1024,19 +1024,34 @@ function renderUsersList() {
         if (currentUser.role === ROLES.ADMIN && u.id !== currentUser.id) {
             actions += `<button onclick="window._changeRole('${u.id}')">Роль</button>`;
             actions += `<button onclick="window._resetPw('${u.id}')">Сброс</button>`;
+            actions += `<button onclick="window._deleteUser('${u.id}')" style="background:#ef4444;color:#fff;border:none;">Удалить</button>`;
         } else if (myCreatable.includes(u.role) && u.id !== currentUser.id) {
             actions += `<button onclick="window._changeRole('${u.id}')">Роль</button>`;
         }
+        const subLabel = u.subdivision ? ` · ${u.subdivision}` : '';
         return `<div class="user-row">
             <div class="user-icon" style="background:${color}22;color:${color};">${icon}</div>
             <div class="user-details">
                 <div class="user-login">${u.login}</div>
-                <div class="user-role">${u.role} · создан: ${u.createdAt ? u.createdAt.split('T')[0] : '—'} · кем: ${u.createdBy||'—'}</div>
+                <div class="user-role">${u.role}${subLabel} · создан: ${u.createdAt ? u.createdAt.split('T')[0] : '—'} · кем: ${u.createdBy||'—'}</div>
             </div>
             <div class="user-actions">${actions}</div>
         </div>`;
     }).join('');
 }
+
+window._deleteUser = async function(userId) {
+    if (!currentUser || currentUser.role !== ROLES.ADMIN) return;
+    if (userId === currentUser.id) return;
+    const users = getUsers();
+    const target = users.find(u => u.id === userId);
+    if (!target) return;
+    const ok = await showConfirm(`Удалить пользователя "${target.login}"? Все его данные останутся в статистике.`);
+    if (!ok) return;
+    const filtered = users.filter(u => u.id !== userId);
+    saveUsers(filtered);
+    renderUsersList();
+};
 
 function openCreateUser() {
     document.getElementById('user-form-title').textContent = 'Создать пользователя';
@@ -1044,6 +1059,7 @@ function openCreateUser() {
     document.getElementById('uf-login').disabled = false;
     document.getElementById('uf-password').value = '';
     document.getElementById('uf-pw-group').classList.remove('hidden');
+    document.getElementById('uf-subdivision').value = '';
     document.getElementById('uf-error').textContent = '';
     const sel = document.getElementById('uf-role');
     sel.innerHTML = creatableRoles(currentUser.role).map(r => `<option value="${r}">${r}</option>`).join('');
@@ -1055,12 +1071,14 @@ async function saveUser() {
     const login = document.getElementById('uf-login').value.trim();
     const password = document.getElementById('uf-password').value;
     const role = document.getElementById('uf-role').value;
+    const subdivision = document.getElementById('uf-subdivision').value.trim();
     const errEl = document.getElementById('uf-error');
     if (window._editingUserId) {
         const users = getUsers();
         const idx = users.findIndex(u => u.id === window._editingUserId);
         if (idx < 0) { errEl.textContent = 'Пользователь не найден'; return; }
         users[idx].role = role;
+        users[idx].subdivision = subdivision;
         saveUsers(users);
         document.getElementById('user-form-overlay').classList.remove('active');
         renderUsersList();
@@ -1074,7 +1092,8 @@ async function saveUser() {
     const hash = await hashPassword(password, salt);
     users.push({
         id: crypto.randomUUID ? crypto.randomUUID() : 'u-'+Date.now(),
-        login, role, passwordHash: hash, salt,
+        login, role, subdivision,
+        passwordHash: hash, salt,
         createdAt: new Date().toISOString(),
         mustChangePassword: true,
         createdBy: currentUser.login
