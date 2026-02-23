@@ -1,0 +1,500 @@
+/* ===== SKEUO.CSS — Skeuomorphic Details: Tabs, Buttons, Switches ===== */
+
+/* ===== OPERATION TABS (Header) ===== */
+.header-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.05);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+}
+
+.header-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out);
+    white-space: nowrap;
+    position: relative;
+}
+
+.header-tab svg {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+}
+
+.header-tab:hover {
+    color: var(--text-main);
+    background: rgba(255,255,255,0.4);
+}
+
+.header-tab.active {
+    color: var(--accent);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08),
+                0 1px 2px rgba(0,0,0,0.04),
+                inset 0 1px 0 rgba(255,255,255,1);
+    /* Skeuomorphic: raised "physical" tab feel */
+    transform: translateY(-1px);
+}
+
+/* ===== SWITCHES (Skeuomorphic) ===== */
+.switches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.switch-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(180deg,
+        rgba(255,255,255,0.85) 0%,
+        rgba(255,255,255,0.5) 100%);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,1);
+    /* Skeuomorphic: subtle emboss */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.03),
+                inset 0 1px 0 rgba(255,255,255,0.9),
+                inset 0 -1px 2px rgba(0,0,0,0.02);
+    transition: all 0.3s var(--ease-out);
+}
+
+.switch-info div { font-size: 14px; font-weight: 700; }
+.switch-info span { font-size: 11px; color: var(--text-secondary); display: block; margin-top: 4px; }
+
+.switch {
+    position: relative;
+    width: 50px;
+    height: 30px;
+    margin-top: 10px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.08) 100%);
+    border-radius: var(--radius-pill);
+    transition: 0.4s;
+    /* Skeuomorphic: inset groove */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px; width: 26px;
+    left: 2px; bottom: 2px;
+    background: linear-gradient(180deg, #fff 0%, #f0f0f0 100%);
+    border-radius: 50%;
+    transition: 0.4s;
+    /* Skeuomorphic: raised knob */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2),
+                0 1px 2px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,1);
+}
+
+input:checked + .slider {
+    background: linear-gradient(180deg, #34c759 0%, #28a745 100%);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),
+                0 0 12px rgba(52,199,89,0.3);
+}
+
+input:checked + .slider.op-slider {
+    background: linear-gradient(180deg, var(--accent) 0%, #005bb5 100%);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15),
+                0 0 12px var(--accent-glow);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* ===== RADIO BUTTONS (Skeuomorphic) ===== */
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.radio-label { display: contents; }
+.radio-label input[type="radio"],
+.radio-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.radio-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s var(--ease-out);
+    padding: 0 14px;
+    height: 48px;
+    /* Skeuomorphic: raised button */
+    background: linear-gradient(180deg,
+        rgba(255,255,255,0.95) 0%,
+        rgba(240,240,240,0.6) 100%);
+    border: 1px solid rgba(255,255,255,1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04),
+                0 1px 2px rgba(0,0,0,0.03),
+                inset 0 1px 0 rgba(255,255,255,1);
+    cursor: pointer;
+    user-select: none;
+}
+
+.radio-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06),
+                inset 0 1px 0 rgba(255,255,255,1);
+}
+
+.radio-btn:active {
+    transform: translateY(0);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.radio-btn.double {
+    flex-direction: column;
+    height: 62px;
+    padding: 6px 10px;
+}
+
+.calc-val { transition: color 0.2s; }
+.base-val { font-size: 10px; opacity: 0.6; margin-top: 2px; }
+
+input:checked + .radio-btn {
+    background: linear-gradient(180deg, #fff 0%, #f5f9ff 100%);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(0,113,227,0.18),
+                0 0 0 2px var(--accent),
+                inset 0 1px 0 rgba(255,255,255,1);
+    transform: translateY(-2px);
+}
+
+input:checked + .radio-btn .calc-val {
+    color: var(--accent);
+}
+
+input:disabled + .radio-btn {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ===== SKEUOMORPHIC BUTTONS ===== */
+.btn-skeuo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Primary (blue) */
+.btn-skeuo-primary {
+    background: linear-gradient(180deg, #3d9cf7 0%, var(--accent) 50%, #005bb5 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0,113,227,0.35),
+                0 2px 4px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 2px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.btn-skeuo-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(0,113,227,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.btn-skeuo-primary:active {
+    transform: translateY(0);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* Success (green) */
+.btn-skeuo-success {
+    background: linear-gradient(180deg, #5fd97e 0%, var(--success) 50%, #1fa340 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(52,199,89,0.35),
+                0 2px 4px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 2px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.btn-skeuo-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(52,199,89,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.btn-skeuo-success:active {
+    transform: translateY(0);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* Danger (red) */
+.btn-skeuo-danger {
+    background: linear-gradient(180deg, #ff6b63 0%, var(--danger) 50%, #cc2d25 100%);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(255,59,48,0.35),
+                0 2px 4px rgba(0,0,0,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 2px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.btn-skeuo-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(255,59,48,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.btn-skeuo-danger:active {
+    transform: translateY(0);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* Ghost (outline) */
+.btn-skeuo-ghost {
+    background: linear-gradient(180deg,
+        rgba(255,255,255,0.8) 0%,
+        rgba(255,255,255,0.4) 100%);
+    color: var(--text-main);
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.btn-skeuo-ghost:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* Liquid-accent flat button */
+.btn-liquid {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out);
+    margin-top: 5px;
+}
+
+.btn-liquid:hover {
+    background: rgba(0,113,227,0.18);
+}
+
+/* ===== DEAL CONFIRM BUTTONS ===== */
+.deal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(0,0,0,0.1);
+}
+
+.deal-buttons .btn-skeuo {
+    flex: 1;
+    padding: 14px 20px;
+    font-size: 15px;
+}
+
+/* ===== HEADER PROFILE ===== */
+.header-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    transition: background 0.2s;
+}
+
+.header-profile:hover {
+    background: rgba(0,0,0,0.04);
+}
+
+.header-profile .profile-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+}
+
+.header-profile .profile-icon svg {
+    width: 18px; height: 18px;
+}
+
+.header-profile .profile-name {
+    font-size: 13px;
+    font-weight: 600;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 200px;
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.95) 0%,
+        rgba(255,255,255,0.8) 100%);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all 0.2s var(--ease-out);
+    z-index: 200;
+}
+
+.profile-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.profile-dropdown button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-xs);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.profile-dropdown button:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.profile-dropdown button svg {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+.profile-dropdown .divider {
+    height: 1px;
+    background: rgba(0,0,0,0.06);
+    margin: 6px 0;
+}
+
+/* ===== PREMIUM BADGE ===== */
+.premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--premium-color);
+    background: linear-gradient(135deg,
+        rgba(245,166,35,0.12) 0%,
+        rgba(245,166,35,0.05) 100%);
+    border: 1px solid rgba(245,166,35,0.25);
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+    white-space: nowrap;
+}
+
+.premium-badge:hover {
+    background: rgba(245,166,35,0.18);
+    transform: translateY(-1px);
+}
+
+.premium-badge svg {
+    width: 14px; height: 14px;
+}
+
+/* ===== STONE REMOVE ===== */
+.btn-remove {
+    width: 42px; height: 42px;
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-remove:hover {
+    background: rgba(255,59,48,0.2);
+    transform: scale(1.05);
+}
+
+/* ===== INPUT WRAPPERS ===== */
+.input-group {
+    display: flex;
+    gap: 12px;
+}
+
+.input-wrapper {
+    flex: 1;
+}
+
+.input-wrapper label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}

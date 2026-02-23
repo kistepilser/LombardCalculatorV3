@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ломбардный эксперт | Liquid Glass</title>
+    <meta name="description" content="Профессиональный калькулятор ломбардных операций — залог, скупка, страхование">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="glass.css">
+    <link rel="stylesheet" href="skeuo.css">
+    <link rel="stylesheet" href="components.css">
+</head>
+<body>
+
+    <!-- ===== VIDEO BACKGROUND ===== -->
+    <div class="video-bg-container">
+        <video autoplay loop muted playsinline id="bg-video">
+            <source src="https://cdn.pixabay.com/video/2021/08/11/84687-587463773_large.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-card">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" style="margin:0 auto 16px;">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <h1>Ломбардный эксперт</h1>
+            <p class="subtitle">Liquid Glass</p>
+            <div class="login-error" id="login-error"></div>
+            <div class="input-group">
+                <label for="login-username">Логин</label>
+                <input type="text" id="login-username" class="liquid-input" placeholder="Введите логин" autocomplete="username">
+            </div>
+            <div class="input-group">
+                <label for="login-password">Пароль</label>
+                <input type="password" id="login-password" class="liquid-input" placeholder="Введите пароль" autocomplete="current-password">
+            </div>
+            <button class="btn-skeuo btn-skeuo-primary" id="btn-login" style="width:100%;margin-top:8px;padding:14px;">Войти</button>
+        </div>
+    </div>
+
+    <!-- ===== CHANGE PASSWORD MODAL ===== -->
+    <div class="glass-overlay" id="change-pw-overlay">
+        <div class="glass-modal">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Смена пароля
+            </h2>
+            <div id="change-pw-forced-msg" class="hidden" style="background:var(--warning-bg);color:var(--warning);padding:12px 16px;border-radius:var(--radius-xs);font-size:13px;font-weight:600;margin-bottom:16px;">
+                ⚠ Требуется смена пароля при первом входе
+            </div>
+            <div class="form-group">
+                <label>Новый пароль</label>
+                <input type="password" id="new-pw-1" class="liquid-input" placeholder="Минимум 6 символов">
+            </div>
+            <div class="form-group">
+                <label>Повторите пароль</label>
+                <input type="password" id="new-pw-2" class="liquid-input" placeholder="Повторите пароль">
+            </div>
+            <div class="login-error" id="change-pw-error"></div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn-skeuo btn-skeuo-primary" id="btn-save-pw" style="flex:1;">Сохранить</button>
+                <button class="btn-skeuo btn-skeuo-ghost hidden" id="btn-cancel-pw" style="flex:1;">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== PREMIUM DETAIL MODAL ===== -->
+    <div class="glass-overlay" id="premium-overlay">
+        <div class="glass-modal" style="max-width:400px;">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--premium-color)" stroke-width="1.5" width="22" height="22"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Детализация премии
+            </h2>
+            <div class="premium-breakdown" id="premium-breakdown">
+                <!-- filled by JS -->
+            </div>
+            <div style="margin-top:20px;padding-top:16px;border-top:2px dashed rgba(0,0,0,0.08);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:700;">Итого:</span>
+                <span id="premium-modal-total" style="font-size:22px;font-weight:900;color:var(--premium-color);">0 ₽</span>
+            </div>
+            <button class="btn-skeuo btn-skeuo-ghost" id="btn-close-premium" style="width:100%;margin-top:16px;">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- ===== USER MANAGEMENT MODAL ===== -->
+    <div class="glass-overlay" id="users-overlay">
+        <div class="glass-modal" style="max-width:600px;">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                Управление пользователями
+            </h2>
+            <button class="btn-skeuo btn-skeuo-primary" id="btn-add-user" style="margin-bottom:16px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Создать пользователя
+            </button>
+            <div class="users-list" id="users-list">
+                <!-- filled by JS -->
+            </div>
+            <button class="btn-skeuo btn-skeuo-ghost" id="btn-close-users" style="width:100%;margin-top:16px;">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- ===== CREATE/EDIT USER MODAL ===== -->
+    <div class="glass-overlay" id="user-form-overlay">
+        <div class="glass-modal" style="max-width:420px;">
+            <h2 id="user-form-title">Создать пользователя</h2>
+            <div class="form-group">
+                <label>Логин</label>
+                <input type="text" id="uf-login" class="liquid-input" placeholder="Уникальный логин">
+            </div>
+            <div class="form-group" id="uf-pw-group">
+                <label>Пароль</label>
+                <input type="password" id="uf-password" class="liquid-input" placeholder="Пароль нового пользователя">
+            </div>
+            <div class="form-group">
+                <label>Роль</label>
+                <select id="uf-role" class="liquid-input">
+                    <!-- filled by JS based on current user permissions -->
+                </select>
+            </div>
+            <div class="login-error" id="uf-error"></div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn-skeuo btn-skeuo-primary" id="btn-uf-save" style="flex:1;">Сохранить</button>
+                <button class="btn-skeuo btn-skeuo-ghost" id="btn-uf-cancel" style="flex:1;">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP (hidden until login) ===== -->
+    <div class="app-wrapper hidden" id="app-wrapper">
+
+        <!-- ===== HEADER BAR ===== -->
+        <header class="header-bar">
+            <!-- Logo -->
+            <div class="header-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Ломбардный эксперт</span>
+            </div>
+
+            <!-- Tabs -->
+            <nav class="header-tabs" id="header-tabs">
+                <button class="header-tab active" data-tab="zalog-no-ins">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    <span class="tab-label">Залог без страхования</span>
+                </button>
+                <button class="header-tab" data-tab="zalog-ins">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <span class="tab-label">Залог со страхованием</span>
+                </button>
+                <button class="header-tab" data-tab="skupka">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polygon points="12 2 2 8 12 22 22 8"/><line x1="2" y1="8" x2="22" y2="8"/></svg>
+                    <span class="tab-label">Скупка</span>
+                </button>
+                <button class="header-tab" data-tab="stats">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span class="tab-label">Статистика</span>
+                </button>
+            </nav>
+
+            <!-- Right: Premium + Profile -->
+            <div style="display:flex;align-items:center;gap:12px;">
+                <!-- Premium badge -->
+                <div class="premium-badge hidden" id="premium-badge" title="Нажмите для детализации">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>Премия: <b id="premium-badge-sum">0 ₽</b></span>
+                </div>
+
+                <!-- Profile -->
+                <div class="header-profile" id="header-profile">
+                    <div class="profile-icon" id="profile-icon">
+                        <!-- SVG set by JS -->
+                    </div>
+                    <span class="profile-name" id="profile-name">admin</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="flex-shrink:0;"><polyline points="6 9 12 15 18 9"/></svg>
+
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <div style="padding:10px 14px 6px;font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;">Профиль</div>
+                        <button id="btn-change-pw">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                            Сменить пароль
+                        </button>
+                        <button id="btn-manage-users" class="hidden">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                            Пользователи
+                        </button>
+                        <div class="divider"></div>
+                        <button id="btn-logout">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                            Выйти
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="app-main">
+
+            <!-- ===== CALCULATOR SCREEN ===== -->
+            <div class="app-container" id="screen-calc">
+
+                <!-- LEFT PANEL — Parameters -->
+                <div class="liquid-panel left-panel">
+                    <h1>Параметры изделия</h1>
+
+                    <!-- Hidden switches managed by tabs -->
+                    <div style="display:none;">
+                        <input type="checkbox" id="isBuyout">
+                        <input type="checkbox" id="isInsured" checked>
+                        <span id="op-status">Залог</span>
+                        <span id="ins-status">Включена</span>
+                        <div id="ins-container"></div>
+                    </div>
+
+                    <div class="section">
+                        <span class="section-title">Тип и вес</span>
+                        <div class="radio-group" id="itemTypeGroup">
+                            <label class="radio-label"><input type="radio" name="itemType" value="0.1" checked><span class="radio-btn single-line"><span class="calc-val">Кольцо</span></span></label>
+                            <label class="radio-label"><input type="radio" name="itemType" value="0.1"><span class="radio-btn single-line"><span class="calc-val">Серьги</span></span></label>
+                            <label class="radio-label"><input type="radio" name="itemType" value="0.1"><span class="radio-btn single-line"><span class="calc-val">Подвес</span></span></label>
+                            <label class="radio-label"><input type="radio" name="itemType" value="0.15"><span class="radio-btn single-line"><span class="calc-val">Браслет</span></span></label>
+                            <label class="radio-label"><input type="radio" name="itemType" value="0.15"><span class="radio-btn single-line"><span class="calc-val">Цепь</span></span></label>
+                        </div>
+                        <div class="input-group" style="margin-top:14px;">
+                            <div class="input-wrapper">
+                                <label>Общий вес (г)</label>
+                                <input type="number" id="totalWeight" class="liquid-input" placeholder="0.000" step="0.001">
+                            </div>
+                            <div class="input-wrapper">
+                                <label>Чистый вес золота (г)</label>
+                                <input type="text" id="netWeight" class="liquid-input" value="0.000" disabled>
+                            </div>
+                        </div>
+
+                        <!-- Пустотелое — под весом -->
+                        <div class="switches-grid" style="margin-top:14px;">
+                            <div class="switch-item">
+                                <div class="switch-info"><div>Пустотелое</div><span>Вычет -5%</span></div>
+                                <label class="switch"><input type="checkbox" id="isHollow"><span class="slider"></span></label>
+                            </div>
+                            <div class="switch-item">
+                                <div class="switch-info"><div>Штифты</div><span id="pins-status">Отключено</span></div>
+                                <label class="switch"><input type="checkbox" id="hasPins"><span class="slider"></span></label>
+                            </div>
+                        </div>
+                        <!-- Количество штифтов (появляется при включении) -->
+                        <div id="pins-qty-wrap" class="input-wrapper hidden" style="margin-top:10px;max-width:200px;">
+                            <label>Количество штифтов (по 0.1 г)</label>
+                            <input type="number" id="pinsQty" class="liquid-input" placeholder="0" min="1" value="1">
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <span class="section-title">Вставки (Камни, Эмаль)</span>
+                        <div id="stones-container"></div>
+                        <button class="btn-liquid" id="btnAddStone">+ Добавить вставку</button>
+                    </div>
+
+                    <div class="section">
+                        <span class="section-title">Проба золота</span>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="purity" value="375"><span class="radio-btn single-line"><span class="calc-val">375</span></span></label>
+                            <label class="radio-label"><input type="radio" name="purity" value="500"><span class="radio-btn single-line"><span class="calc-val">500</span></span></label>
+                            <label class="radio-label"><input type="radio" name="purity" value="583"><span class="radio-btn single-line"><span class="calc-val">583</span></span></label>
+                            <label class="radio-label"><input type="radio" name="purity" value="585" checked><span class="radio-btn single-line"><span class="calc-val">585</span></span></label>
+                            <label class="radio-label"><input type="radio" name="purity" value="750"><span class="radio-btn single-line"><span class="calc-val">750</span></span></label>
+                        </div>
+                    </div>
+
+                    <div class="section" style="margin-bottom: 0;">
+                        <span class="section-title" id="lbl-price-group">Тариф за грамм (Залог)</span>
+
+                        <div class="radio-group price-layer" id="price-group-zalog">
+                            <label class="radio-label"><input type="radio" name="price_zalog" value="5000" checked><span class="radio-btn double"><span class="calc-val">5 000 ₽</span><span class="base-val">(5 000 ₽)</span></span></label>
+                            <label class="radio-label"><input type="radio" name="price_zalog" value="6000"><span class="radio-btn double"><span class="calc-val">6 000 ₽</span><span class="base-val">(6 000 ₽)</span></span></label>
+                            <label class="radio-label"><input type="radio" name="price_zalog" value="7000" id="btn7000"><span class="radio-btn double"><span class="calc-val">7 000 ₽</span><span class="base-val">(7 000 ₽)</span></span></label>
+                        </div>
+
+                        <div class="radio-group price-layer" id="price-group-skupka" style="display: none;">
+                            <label class="radio-label"><input type="radio" name="price_skupka" value="2500"><span class="radio-btn double"><span class="calc-val">2 500 ₽</span><span class="base-val">(2 500 ₽)</span></span></label>
+                            <label class="radio-label"><input type="radio" name="price_skupka" value="3000"><span class="radio-btn double"><span class="calc-val">3 000 ₽</span><span class="base-val">(3 000 ₽)</span></span></label>
+                            <label class="radio-label"><input type="radio" name="price_skupka" value="3500" checked><span class="radio-btn double"><span class="calc-val">3 500 ₽</span><span class="base-val">(3 500 ₽)</span></span></label>
+                            <label class="radio-label"><input type="radio" name="price_skupka" value="4000"><span class="radio-btn double"><span class="calc-val">4 000 ₽</span><span class="base-val">(4 000 ₽)</span></span></label>
+                        </div>
+                        <div id="limitMsg" class="limit-warning">⚠ Тариф заблокирован: лимит 150 000 ₽ превышен.</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL — Receipt -->
+                <div class="results-sidebar">
+                    <div class="liquid-panel receipt-card">
+                        <h2>Расчетный лист</h2>
+
+                        <div id="cart-container" class="cart-container">
+                            <div class="cart-header">Детализация вычетов</div>
+                            <div id="cart-items"></div>
+                            <div class="cart-total"><span>Чистый вес:</span><span id="cart-net-weight">0.000 г</span></div>
+                        </div>
+
+                        <div class="res-line"><span>Базовый тариф (585):</span><span id="res-base-price">0 ₽</span></div>
+                        <div class="res-line"><span>Тариф пересчета (<span id="res-purity-label">585</span>):</span><span id="res-actual-price">0 ₽</span></div>
+
+                        <div id="insurance-blocks" class="insurance-block" style="display: none;">
+                            <div class="res-line"><span style="color: var(--text-main); font-weight: 600;">На руки клиенту:</span><span id="res-hand" style="font-size: 16px; color: var(--accent);">0 ₽</span></div>
+                            <div class="res-line" style="margin-top: 10px;"><span>Страховка (23.76%):</span><span id="res-ins">0 ₽</span></div>
+                        </div>
+
+                        <div class="res-totals-split">
+                            <div class="res-total-box hand-box">
+                                <span class="res-total-label">На руки клиенту:</span>
+                                <span id="res-hand-main" class="big-price" style="color:var(--success);">0 ₽</span>
+                            </div>
+                            <div class="res-total-box loan-box" id="loan-total-box">
+                                <span class="res-total-label">Сумма займа:</span>
+                                <span id="res-total" class="big-price">0 ₽</span>
+                            </div>
+                        </div>
+
+                        <div id="margin-block" class="margin-block">
+                            <div class="res-line" style="margin-bottom: 0;"><span style="color: var(--margin-color); font-weight: 700;">Прогнозируемая маржа:</span><span id="res-margin" style="color: var(--margin-color); font-size: 16px;">0 ₽</span></div>
+                            <div style="font-size: 11px; color: rgba(139, 92, 246, 0.8); margin-top: 6px; line-height: 1.3;">От розничной цены продажи 6 500 ₽ (585 проба)</div>
+                        </div>
+
+                        <div id="interest-block" class="interest-block">
+                            <div class="interest-header" id="btn-interest-toggle">
+                                <span>Прогноз процентов (Залог)</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                            <div class="interest-content">
+                                <div class="input-wrapper" style="margin-bottom: 12px; margin-top: 5px;">
+                                    <label>Дата планируемого выкупа</label>
+                                    <input type="date" id="targetDate" class="liquid-input date-input">
+                                </div>
+                                <div class="res-line"><span>Дней в залоге:</span><span id="int-days">1</span></div>
+                                <div class="res-line"><span>Процентная ставка:</span><span id="int-percent">0.000%</span></div>
+                                <div class="res-line"><span>Начислено процентов:</span><span id="int-sum" style="color: var(--danger);">0 ₽</span></div>
+                                <div class="res-line total" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(0,0,0,0.1); flex-direction: row; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">Итого к возврату:</span>
+                                    <span id="int-total-return" style="font-size: 18px; color: var(--text-main);">0 ₽</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DEAL CONFIRM -->
+                        <div class="deal-section" id="deal-section">
+                            <h3>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                Сделка состоялась?
+                            </h3>
+                            <div class="deal-buttons">
+                                <button class="btn-skeuo btn-skeuo-success" id="btn-deal-yes">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Да
+                                </button>
+                                <button class="btn-skeuo btn-skeuo-danger" id="btn-deal-no">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    Нет
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== STATISTICS SCREEN ===== -->
+            <div class="stats-screen hidden" id="screen-stats">
+
+                <!-- ===== PLAN (always on top) ===== -->
+                <div class="liquid-panel hidden" id="plan-section">
+                    <h2 style="margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        План
+                    </h2>
+                    <div class="plan-input-group">
+                        <div class="input-wrapper" id="plan-sub-wrap" style="display:none;">
+                            <label>Подразделение</label>
+                            <select id="plan-subdivision" class="liquid-input" style="font-size:14px;"></select>
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Сумма плана на <span id="plan-month">—</span></label>
+                            <input type="number" id="plan-value" class="liquid-input" placeholder="Введите сумму плана">
+                        </div>
+                        <button class="btn-skeuo btn-skeuo-primary" id="btn-save-plan" style="height:52px;align-self:flex-end;">Сохранить</button>
+                    </div>
+                    <div class="plan-status" id="plan-status"></div>
+                    <div id="plan-progress-wrap" class="hidden" style="margin-top:16px;">
+                        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px;">
+                            <span>Выполнение плана:</span>
+                            <span id="plan-progress-pct">0%</span>
+                        </div>
+                        <div class="plan-progress-bar">
+                            <div class="plan-progress-fill" id="plan-progress-fill" style="width:0%"></div>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;">
+                            Факт: <b id="plan-fact-sum">0 ₽</b> из <b id="plan-target-sum">0 ₽</b>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== STATS MAIN PANEL ===== -->
+                <div class="liquid-panel" style="margin-top:16px;">
+                    <h1 style="display:flex;align-items:center;gap:10px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        Статистика
+                    </h1>
+
+                    <div class="stats-header">
+                        <div class="stats-period-select" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">
+                            <label style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-right:4px;">Период:</label>
+                            <select id="stats-year" class="liquid-input" style="width:auto;padding:8px 12px;font-size:13px;min-width:90px;"></select>
+                            <div id="stats-months" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+                            <button class="btn-skeuo" id="btn-stats-all" style="padding:6px 14px;font-size:12px;font-weight:700;">Все</button>
+                        </div>
+                        <div class="stats-date-range">
+                            <label style="font-size:13px;font-weight:600;">С:</label>
+                            <input type="date" id="stats-date-from">
+                            <label style="font-size:13px;font-weight:600;">По:</label>
+                            <input type="date" id="stats-date-to">
+                            <button class="btn-skeuo btn-skeuo-primary" id="btn-stats-apply" style="padding:8px 16px;font-size:13px;">Показать</button>
+                        </div>
+                    </div>
+
+                    <div class="stats-cards" id="stats-cards">
+                        <div class="stat-card"><div class="stat-label">Сделок</div><div class="stat-value" id="sc-total-deals" style="color:var(--accent);">0</div></div>
+                        <div class="stat-card"><div class="stat-label">На руки</div><div class="stat-value" id="sc-total-hand" style="color:var(--success);">0 ₽</div></div>
+                        <div class="stat-card"><div class="stat-label">Сумма займа</div><div class="stat-value" id="sc-total-loan" style="color:var(--accent);">0 ₽</div></div>
+                        <div class="stat-card"><div class="stat-label">Страховка</div><div class="stat-value" id="sc-total-ins" style="color:var(--warning);">0 ₽</div></div>
+                        <div class="stat-card"><div class="stat-label">Маржа (скупка)</div><div class="stat-value" id="sc-total-margin" style="color:var(--margin-color);">0 ₽</div></div>
+                        <div class="stat-card"><div class="stat-label">Премии</div><div class="stat-value" id="sc-total-premium" style="color:var(--premium-color);">0 ₽</div></div>
+                        <div class="stat-card"><div class="stat-label">Возврат займа</div><div class="stat-value" id="sc-total-returns" style="color:#10b981;">0 ₽</div></div>
+                        <div class="stat-card"><div class="stat-label">Продление займа</div><div class="stat-value" id="sc-total-extensions" style="color:#6366f1;">0 ₽</div></div>
+                    </div>
+
+                    <div class="glass-table-wrap">
+                        <table class="glass-table">
+                            <thead><tr><th>Дата</th><th>Сделок</th><th>На руки</th><th>Займ</th><th>Страховка</th><th>Маржа</th><th>Премии</th></tr></thead>
+                            <tbody id="stats-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ===== DEAL DETAILS (tabbed by subdivision) ===== -->
+                <div class="liquid-panel" style="margin-top:16px;">
+                    <h2 style="margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                        Детализация сделок
+                    </h2>
+                    <div class="side-tabbed-panel">
+                        <div class="side-tabs" id="detail-tabs">
+                            <!-- JS fills: one tab per subdivision -->
+                        </div>
+                        <div class="side-tab-content" id="deals-detail">
+                            <div style="text-align:center;color:var(--text-secondary);padding:30px;">Нет данных</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== MANUAL OPS (tabbed) ===== -->
+                <div class="liquid-panel" style="margin-top:16px;">
+                    <h2 style="margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        Ручные операции
+                    </h2>
+                    <div class="side-tabbed-panel">
+                        <div class="side-tabs">
+                            <button class="side-tab active" data-mop-tab="return">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                                Возврат
+                            </button>
+                            <button class="side-tab" data-mop-tab="extension">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                Продление
+                            </button>
+                            <button class="side-tab" data-mop-tab="online">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                Онлайн
+                            </button>
+                        </div>
+                        <div class="side-tab-content">
+                            <!-- Возврат займа -->
+                            <div class="mop-pane active" id="mop-return">
+                                <h3 style="margin-bottom:14px;font-size:15px;font-weight:700;color:#10b981;">Возврат займа</h3>
+                                <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                                    <div class="input-wrapper" style="flex:1;min-width:140px;">
+                                        <label>Сумма возврата (общая)</label>
+                                        <input type="number" id="return-total" class="liquid-input" placeholder="0">
+                                    </div>
+                                    <div class="input-wrapper" style="flex:1;min-width:140px;">
+                                        <label>Сумма процентов</label>
+                                        <input type="number" id="return-interest" class="liquid-input" placeholder="0">
+                                    </div>
+                                    <button class="btn-skeuo btn-skeuo-success" id="btn-save-return" style="height:52px;">Записать</button>
+                                </div>
+                                <div class="manual-op-log" id="return-log" style="margin-top:12px;"></div>
+                            </div>
+                            <!-- Продление займа (only interest) -->
+                            <div class="mop-pane" id="mop-extension">
+                                <h3 style="margin-bottom:14px;font-size:15px;font-weight:700;color:#6366f1;">Продление займа</h3>
+                                <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                                    <div class="input-wrapper" style="flex:1;min-width:200px;">
+                                        <label>Сумма процентов</label>
+                                        <input type="number" id="ext-interest" class="liquid-input" placeholder="0">
+                                    </div>
+                                    <button class="btn-skeuo btn-skeuo-primary" id="btn-save-ext" style="height:52px;">Записать</button>
+                                </div>
+                                <div class="manual-op-log" id="ext-log" style="margin-top:12px;"></div>
+                            </div>
+                            <!-- Онлайн продление -->
+                            <div class="mop-pane" id="mop-online">
+                                <h3 style="margin-bottom:14px;font-size:15px;font-weight:700;color:var(--accent);">Онлайн продление</h3>
+                                <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                                    <div class="input-wrapper" style="flex:1;min-width:140px;">
+                                        <label>ФИО клиента</label>
+                                        <input type="text" id="online-fio" class="liquid-input" placeholder="Иванов И.И.">
+                                    </div>
+                                    <div class="input-wrapper" style="flex:1;min-width:120px;">
+                                        <label>Сумма займа</label>
+                                        <input type="number" id="online-loan" class="liquid-input" placeholder="0">
+                                    </div>
+                                    <div class="input-wrapper" style="flex:1;min-width:120px;">
+                                        <label>Чистый вес (г)</label>
+                                        <input type="number" id="online-weight" class="liquid-input" placeholder="0.000" step="0.001">
+                                    </div>
+                                    <button class="btn-skeuo btn-skeuo-primary" id="btn-calc-online" style="height:52px;">Рассчитать</button>
+                                </div>
+                                <div id="online-result" class="hidden" style="margin-top:14px;padding:16px;border-radius:var(--radius-sm);background:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.8);">
+                                    <div class="res-line"><span>Цена за грамм:</span><span id="online-ppg" style="font-weight:800;">0 ₽</span></div>
+                                    <div id="online-block-warn" class="block-warning hidden" style="margin-top:10px;">
+                                        ⛔ <b>Подлежит блокировке</b> — цена за грамм свыше 10 000 ₽
+                                    </div>
+                                </div>
+                                <div class="manual-op-log" id="online-log" style="margin-top:12px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+    <!-- Custom confirm modal (replaces native confirm) -->
+    <div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:16px;padding:28px 32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">
+            <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+            <div id="confirm-message" style="font-size:16px;font-weight:600;margin-bottom:24px;color:#1d1d1f;line-height:1.5;"></div>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button id="confirm-cancel" style="flex:1;padding:12px 20px;border-radius:10px;border:1px solid #d1d5db;background:#f9fafb;font-size:14px;font-weight:700;cursor:pointer;color:#374151;transition:all 0.2s;">Отмена</button>
+                <button id="confirm-ok" style="flex:1;padding:12px 20px;border-radius:10px;border:none;background:#ef4444;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
